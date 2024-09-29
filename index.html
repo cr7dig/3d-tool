@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&family=Great+Vibes&family=Satisfy&family=Allura&display=swap');
+    </style>
+    
+        
+    
+    <script
+        type="importmap"> { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/" } } </script>
+</head>
+
+<body>
+    
+       <!-- <input type="color" id="colorPicker" value="#ff0000" style="position: absolute; top: 10px; left: 10px; z-index: 1;"> -->
+     <div style="position: absolute; top: 10px; left: 10px; z-index: 1;">
+        <button onclick="changeColor('#ff0000')" style="background-color: #ff0000; width: 30px; height: 30px; border: none;"></button>
+        <button onclick="changeColor('#964B00')" style="background-color: #964B00; width: 30px; height: 30px; border: none;"></button>
+        <button onclick="changeColor('#ADD8E6')" style="background-color: #ADD8E6; width: 30px; height: 30px; border: none;"></button>
+        <button onclick="changeColor('#ffff00')" style="background-color: #ffff00; width: 30px; height: 30px; border: none;"></button>
+        <button onclick="changeColor('#000000')" style="background-color: #000000; width: 30px; height: 30px; border: none;"></button>
+        <button onclick="resetColor()" style="margin-left: 10px;">Reset to Default(WHITE)</button>
+    </div>
+   <!-- <div style="position: absolute; top: 50px; left: 10px; z-index: 1;">
+        
+        <input type="text" id="userText" placeholder="Enter text here">
+        <button onclick="addTextToTshirt(1.8)">Add Text at Y = 2</button>
+        <button onclick="addTextToTshirt(2.4)">Add Text at Y = 2.5</button>
+        <button onclick="addTextToTshirt(3)">Add Text at Y = 3</button>
+    </div> -->
+    <div style="position: absolute; top: 50px; left: 10px; z-index: 1;">
+        <input type="text" id="userText" placeholder="Enter text here">
+        
+        
+        <label for="textSideSelection">Choose Side:</label>
+        <select id="textSideSelection">
+            <option value="front">Front</option>
+            <option value="back">Back</option>
+        </select>
+
+        <label for="fontSelection">Choose Font:</label>
+    <select id="fontSelection">
+        <option value="Arial">Arial</option>
+        <option value="Holtwood One SC">Holtwood One SC</option>
+        <option value="Montserrat SemiBold">Montserrat SemiBold</option>
+        <option value="Montserrat Thin">Montserrat Thin</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Verdana">Verdana</option>
+        <!-- <option value="Pacifico">Pacifico</option>
+        <option value="Dancing Script">Dancing Script</option>
+        <option value="Lobster">Lobster</option>
+        <option value="Cinzel Decorative">Cinzel Decorative</option>
+        <option value="Great Vibes">Great Vibes</option> -->
+    </select>
+        
+        <button onclick="addTextToTshirt(1.8)">Add Text at Y = 1.8</button>
+        <button onclick="addTextToTshirt(2.4)">Add Text at Y = 2.4</button>
+        <button onclick="addTextToTshirt(3.8)">Add Text at Y = 3</button>
+    </div>
+    
+    <!-- <div style="position: absolute; top: 80px; left: 10px; z-index: 1;"><input type="file" id="imagePicker" accept="image/*">
+    <button onclick="applyImageToModel()">Apply Image</button></div> -->
+    <div style="position: absolute; top: 80px; left: 10px; z-index: 1;">
+        <input type="file" id="imagePicker" accept="image/*">
+        <label for="sideSelection">Choose Side:</label>
+        <select id="sideSelection">
+            <option value="front">Front</option>
+            <option value="back">Back</option>
+        </select>
+        <button onclick="applyImageToModel()">Apply Image</button>
+    </div>
+    
+    <div style="position: absolute; top: 120px; left: 10px; z-index: 1;">
+        <button id="refreshButton">Refresh Page</button>
+    </div>
+    
+
+    
+    <script type="module" src="/main.js"> import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
+        import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/loaders/GLTFLoader.js';
+       // import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/controls/OrbitControls.js';
+       </script>
+
+</body>
+
+</html>
