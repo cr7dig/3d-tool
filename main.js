@@ -255,6 +255,70 @@ window.applyImageToModel = function() {
 };
 
 
+
+// Array of designs for each category (replace with actual paths or images)
+const designs = {
+    animals: ['assets/art/mountain1.jpg', 'designs/animal2.png'], //only mountain1.jpg is existing baki sab doesnt exist
+    abstract: ['designs/abstract1.png', 'designs/abstract2.png'], //need to add more art designs
+    shapes: ['designs/shape1.png', 'designs/shape2.png']
+};
+
+// Function to display categories
+window.showCategories = function() {
+    document.getElementById('artCategories').style.display = 'block';
+    document.getElementById('artDesigns').style.display = 'none'; // Hide designs until a category is selected
+};
+
+// Function to display designs based on selected category (with image previews)
+window.showDesigns = function(category) {
+    const designOptions = document.getElementById('designOptions');
+    designOptions.innerHTML = ''; // Clear previous designs
+    document.getElementById('artDesigns').style.display = 'block';
+
+    // Loop through designs and create clickable images for each design
+    designs[category].forEach((design, index) => {
+        const designImg = document.createElement('img');
+        designImg.src = design;
+        designImg.style.width = '50px'; // Set a small width for preview
+        designImg.style.cursor = 'pointer'; // Make it clear that it's clickable
+        designImg.style.margin = '10px'; // Add some margin between previews
+
+        designImg.onclick = function() {
+            applyDesignToModel(design); // Apply design on click
+        };
+
+        designOptions.appendChild(designImg);
+    });
+};
+
+
+// Function to apply selected design to the t-shirt
+window.applyDesignToModel = function(designSrc) {
+    const img = new Image();
+    img.src = designSrc;
+
+    img.onload = function() {
+        const texture = new THREE.Texture(img);
+        texture.needsUpdate = true;
+
+        // Set texture wrap and repeat
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(1.68, 1.5); // Adjust to fit the model
+        texture.offset.set(0.5, 0); // Adjust to position the image on the front
+
+        model.traverse((child) => {
+            if (child.isMesh) {
+                child.material.map = texture;
+                child.material.needsUpdate = true;
+            }
+        });
+    };
+};
+
+
+
+
 const refreshButton = document.getElementById('refreshButton');
 
 refreshButton.addEventListener('click', () => {

@@ -10,6 +10,31 @@
             margin: 0;
         }
         @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&family=Great+Vibes&family=Satisfy&family=Allura&display=swap');
+        
+        /* Styling for Art Modal */ /* this code is not applied to anything yet, yeh purana art section keliye hai, but we can use this if u want */
+        #artModal, #artOptions {
+            width: 400px;
+            text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+            z-index: 2;
+            border-radius: 10px;
+        }
+        #artImages img {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100px;
+            margin: 10px;
+        }
+        #artImages img:hover {
+            transform: scale(1.1);
+        } /* this code is not applied to anything yet, yeh purana art section keliye hai, but we can use this if u want */
+    
     </style>
     
         
@@ -83,6 +108,28 @@
     <div style="position: absolute; top: 120px; left: 10px; z-index: 1;">
         <button id="refreshButton">Refresh Page</button>
     </div>
+
+    <div style="position: absolute; top: 160px; left: 10px; z-index: 1;">
+        <button onclick="showCategories()">Art</button>
+        
+        <!-- Container for displaying categories -->
+        <div id="artCategories" style="display:none;">
+            <h3>Select Category:</h3>
+            <button onclick="showDesigns('animals')">Animals</button>
+            <button onclick="showDesigns('abstract')">Abstract</button>
+            <button onclick="showDesigns('shapes')">Shapes</button>
+        </div>
+    
+        <!-- Container for displaying designs -->
+        <div id="artDesigns" style="display:none;">
+            <h3>Select Design:</h3>
+            <div id="designOptions"></div>
+        </div>
+    </div>
+    
+    
+
+    
     
 
     
