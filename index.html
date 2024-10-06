@@ -13,7 +13,7 @@
         
         /* Styling for Art Modal */ /* this code is not applied to anything yet, yeh purana art section keliye hai, but we can use this if u want */
         #artModal, #artOptions {
-            width: 400px;
+             width: 400px;
             text-align: center;
             position: fixed;
             top: 50%;
@@ -33,7 +33,8 @@
         }
         #artImages img:hover {
             transform: scale(1.1);
-        } /* this code is not applied to anything yet, yeh purana art section keliye hai, but we can use this if u want */
+        }  
+        /* this code is not applied to anything yet, yeh purana art section keliye hai, but we can use this if u want */
     
     </style>
     
@@ -46,7 +47,7 @@
 <body>
     
        <!-- <input type="color" id="colorPicker" value="#ff0000" style="position: absolute; top: 10px; left: 10px; z-index: 1;"> -->
-     <div style="position: absolute; top: 10px; left: 10px; z-index: 1;">
+     <div style="position: absolute; top: 10px; left: 10px;">
         <button onclick="changeColor('#ff0000')" style="background-color: #ff0000; width: 30px; height: 30px; border: none;"></button>
         <button onclick="changeColor('#964B00')" style="background-color: #964B00; width: 30px; height: 30px; border: none;"></button>
         <button onclick="changeColor('#ADD8E6')" style="background-color: #ADD8E6; width: 30px; height: 30px; border: none;"></button>
@@ -61,7 +62,7 @@
         <button onclick="addTextToTshirt(2.4)">Add Text at Y = 2.5</button>
         <button onclick="addTextToTshirt(3)">Add Text at Y = 3</button>
     </div> -->
-    <div style="position: absolute; top: 50px; left: 10px; z-index: 1;">
+    <div style="position: absolute; top: 50px; left: 10px; ">
         <input type="text" id="userText" placeholder="Enter text here">
         
         
@@ -87,6 +88,16 @@
         <option value="Cinzel Decorative">Cinzel Decorative</option>
         <option value="Great Vibes">Great Vibes</option> -->
     </select>
+
+    <label for="textColorSelection">Choose Text Color:</label>
+    <div id="textColorSelection" style="position: absolute; top: 200px;">
+        <button onclick="changeTextColor('#FFFFFF')" style="background-color: #FFFFFF; width: 30px; height: 30px; border: none;"></button> <!-- White -->
+        <button onclick="changeTextColor('#000000')" style="background-color: #000000; width: 30px; height: 30px; border: none;"></button> <!-- Black -->
+        <button onclick="changeTextColor('#FF0000')" style="background-color: #FF0000; width: 30px; height: 30px; border: none;"></button> <!-- Red -->
+        <button onclick="changeTextColor('#00FF00')" style="background-color: #00FF00; width: 30px; height: 30px; border: none;"></button> <!-- Green -->
+        <button onclick="changeTextColor('#0000FF')" style="background-color: #0000FF; width: 30px; height: 30px; border: none;"></button> <!-- Blue -->
+        <button onclick="changeTextColor('#FFFF00')" style="background-color: #FFFF00; width: 30px; height: 30px; border: none;"></button> <!-- Yellow -->
+    </div>
         
         <button onclick="addTextToTshirt(1.8)">Add Text at Y = 1.8</button>
         <button onclick="addTextToTshirt(2.4)">Add Text at Y = 2.4</button>
@@ -95,7 +106,7 @@
     
     <!-- <div style="position: absolute; top: 80px; left: 10px; z-index: 1;"><input type="file" id="imagePicker" accept="image/*">
     <button onclick="applyImageToModel()">Apply Image</button></div> -->
-    <div style="position: absolute; top: 80px; left: 10px; z-index: 1;">
+    <div style="position: absolute; top: 80px; left: 10px;">
         <input type="file" id="imagePicker" accept="image/*">
         <label for="sideSelection">Choose Side:</label>
         <select id="sideSelection">
@@ -105,11 +116,11 @@
         <button onclick="applyImageToModel()">Apply Image</button>
     </div>
     
-    <div style="position: absolute; top: 120px; left: 10px; z-index: 1;">
+    <div style="position: absolute; top: 120px; left: 10px;">
         <button id="refreshButton">Refresh Page</button>
     </div>
 
-    <div style="position: absolute; top: 160px; left: 10px; z-index: 1;">
+    <div style="position: absolute; top: 160px; left: 10px;">
         <button onclick="showCategories()">Art</button>
         
         <!-- Container for displaying categories -->

@@ -24,7 +24,7 @@ scene.add(directionalLight);
 const loader = new GLTFLoader();
 let model;
 
-loader.load('./models/tshirt.glb', function (gltf) {
+loader.load('./models/tshirt2.glb', function (gltf) {
     model = gltf.scene;
 
     model.traverse((child) => {
@@ -45,6 +45,9 @@ loader.load('./models/tshirt.glb', function (gltf) {
 // Define the default color
 const defaultColor = '#ffffff'; // Set this to your desired default color
 
+// Separate front and back textures
+let frontTexture, backTexture;
+
 // Function to change model color based on button click
 window.changeColor = function(color) {
     model.traverse((child) => {
@@ -59,108 +62,47 @@ window.resetColor = function() {
     changeColor(defaultColor); // Call changeColor with the default color
 };
 
+// Initialize the canvas for text
+let canvas, context;
 
-
-//
-//
-//
-//
-//
-//
-//
-//
-// Function to add text on the t-shirt model
-// window.addTextToTshirt = function(yOffset) {
-//     const userText = document.getElementById('userText').value;
-//     const side = document.getElementById('textSideSelection').value; // Get the selected side (front or back)
-
-//     if (!userText) return; // Exit if no text is entered
-
-//     // Create a canvas to draw the text
-//     const canvas = document.createElement('canvas');
-//     canvas.width = 1024;
-//     canvas.height = 1024;
-//     const context = canvas.getContext('2d');
-
-//     // Fill the canvas with the current model color
-//     context.fillStyle = '#ffffff'; // Set the background to transparent if necessary
-//     context.fillRect(0, 0, canvas.width, canvas.height);
-    
-
-//     // Style the text
-//     context.fillStyle = '#000000'; // Black text (you can change this)
-//     context.font = 'bold 100px Arial'; // Font and size
-//     context.textAlign = 'center';
-//     context.textBaseline = 'middle';
-//     context.fillText(userText, canvas.width / 2, canvas.height / yOffset); // Draw text in the center
-
-//     // Create a texture from the canvas
-//     const textTexture = new THREE.CanvasTexture(canvas);
-
-//      // Ensure the texture repeats across the model for better mapping
-//      textTexture.wrapS = THREE.ClampToEdgeWrapping;
-//      textTexture.wrapT = THREE.RepeatWrapping;
-//      textTexture.repeat.set(1, 1); // Adjust the repetition as necessary
-//      textTexture.offset.set(0.5, 0); // Adjust to move the texture to the front
-//         //TRYING EDIT
-//      // Adjust texture position based on the selected side
-//     if (side === 'front') {
-//         textTexture.offset.set(0.5, 0); // Move texture to the front
-//     } else if (side === 'back') {
-//         textTexture.offset.set(-0.5, 0); // Move texture to the back (adjust as needed)
-//     }
-//     //     //TRYING EDIT
-
-//     // Apply texture to the t-shirt material without affecting the color
-//     model.traverse((child) => {
-//         if (child.isMesh) {
-//             // Combine the text texture with the existing material map
-//             child.material.map = textTexture; // Set the new text texture
-//             child.material.needsUpdate = true; // Ensure the material is updated
-//         }
-//     });
-// };
-//
-//
-//
-//
-//
-//
-//
-let canvas, context; // Global canvas and context to maintain between function calls
-
-// Initialize the canvas if not already created
 function initializeCanvas() {
     if (!canvas) {
-        canvas = document.createElement('canvas');
-        canvas.width = 1024;
-        canvas.height = 1024;
-        context = canvas.getContext('2d');
-        
-        // Fill the canvas with the base color (could be white or transparent)
-        context.fillStyle = '#ffffff'; // T-shirt base color
-        context.fillRect(0, 0, canvas.width, canvas.height);
+    canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 1024;
+    context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
     }
 }
-// Array to keep track of applied textures
 
+let selectedTextColor = '#000000'; // Default color for the text
 
+// Make the function globally accessible by attaching it to the window object
+window.changeTextColor = function(color) {
+    selectedTextColor = color;
+    console.log("Selected text color: ", selectedTextColor); // Debugging log
+}
+
+// Function to add text to the t-shirt model (front or back)
 window.addTextToTshirt = function(yOffset) {
     const userText = document.getElementById('userText').value;
     const side = document.getElementById('textSideSelection').value;
     const selectedFont = document.getElementById('fontSelection').value;
     
-
-    if (!userText) return;
+    if (userText.trim() === "") {
+        alert("Please enter text.");
+        return;
+    }
 
     initializeCanvas();
 
-  
     // Style the text
-    context.fillStyle = '#000000'; // Black text
+    context.fillStyle = selectedTextColor; // Use the selected color for the text
     context.font = `bold 100px ${selectedFont}`; // Apply selected font
     context.textAlign = 'center';
     context.textBaseline = 'middle';
+    context.fillText(userText, canvas.width / 2, canvas.height / yOffset);
 
     // Draw text on the selected side (front or back)
     if (side === 'front') {
@@ -172,44 +114,43 @@ window.addTextToTshirt = function(yOffset) {
     const textTexture = new THREE.CanvasTexture(canvas);
     textTexture.wrapS = THREE.ClampToEdgeWrapping;
     textTexture.wrapT = THREE.RepeatWrapping;
-    textTexture.repeat.set(1, 1); // Original repeat settings
-    // Adjust texture position based on the selected side
+
     if (side === 'front') {
         textTexture.offset.set(0.5, 0); // Move texture to the front
-       
+        frontTexture = textTexture;
+        applyFrontTexture();
     } else if (side === 'back') {
         textTexture.offset.set(-0.5, 0); // Move texture to the back (adjust as needed)
-        
+        backTexture = textTexture;
+        applyBackTexture();
     }
+};
 
+// Function to apply front texture (preserve back texture)
+function applyFrontTexture() {
     model.traverse((child) => {
-        if (child.isMesh) {
-            child.material.map = textTexture;
+        if (child.isMesh && child.material.name === 'FABRIC_1_FRONT_4193') {
+            child.material.map = frontTexture;
             child.material.needsUpdate = true;
         }
     });
-};
+}
 
+// Function to apply back texture (preserve front texture)
+function applyBackTexture() {
+    model.traverse((child) => {
+        if (child.isMesh && child.material.name === 'FABRIC back') {
+            child.material.map = backTexture;
+            child.material.needsUpdate = true;
+        }
+    });
+}
 
-
-
-
-
-
-
-//
-//
-//
-//
-//
-//
-//
-// JavaScript code for applying image to the model
+// Function to apply image to the model (front or back)
 window.applyImageToModel = function() {
     const input = document.getElementById('imagePicker');
     const file = input.files[0];
-    const side = document.getElementById('sideSelection').value; // Get the selected side (front or back)
-
+    const side = document.getElementById('sideSelection').value;
 
     if (!file) {
         alert('Please select an image file');
@@ -217,82 +158,32 @@ window.applyImageToModel = function() {
     }
 
     const reader = new FileReader();
-
     reader.onload = function(event) {
         const img = new Image();
         img.src = event.target.result;
-
         img.onload = function() {
             const texture = new THREE.Texture(img);
             texture.needsUpdate = true;
-
-            // Adjust wrapping and scaling to fit the t-shirt
             texture.wrapS = THREE.ClampToEdgeWrapping;
             texture.wrapT = THREE.RepeatWrapping;
-
-            // Adjust repeat settings (optional, depending on model UV mapping)
-            texture.repeat.set(1.68, 1.5); // Adjust if necessary, try smaller values like (0.5, 0.5)
+            texture.repeat.set(1.68, 1.5);
             texture.offset.set(0.5, 0); // Adjust to move the texture to the front
-            //TRYING EDIT
-            // Adjust based on the side selected by the user
-        if (side === 'front') {
-            texture.offset.set(0.5, 0); // Apply to front (assuming the front is mapped here)
-        } else if (side === 'back') {
-            texture.offset.set(-1.2, 0); // Adjust for back (this is just an example, adjust values based on UV map)
-        }
-            //TRYING EDIT
 
-            model.traverse((child) => {
-                if (child.isMesh) {
-                    child.material.map = texture; // Apply the texture
-                    child.material.needsUpdate = true; // Ensure the material updates
-                }
-            });
+            if (side === 'front') {
+                frontTexture = texture;
+                applyFrontTexture();
+            } else if (side === 'back') {
+                texture.offset.set(-1.2, 0); // Adjust for back (this is just an example, adjust values based on UV map)
+                backTexture = texture;
+                applyBackTexture();
+            }
         };
     };
 
     reader.readAsDataURL(file);
 };
 
-
-
-// Array of designs for each category (replace with actual paths or images)
-const designs = {
-    animals: ['assets/art/mountain1.jpg', 'designs/animal2.png'], //only mountain1.jpg is existing baki sab doesnt exist
-    abstract: ['designs/abstract1.png', 'designs/abstract2.png'], //need to add more art designs
-    shapes: ['designs/shape1.png', 'designs/shape2.png']
-};
-
-// Function to display categories
-window.showCategories = function() {
-    document.getElementById('artCategories').style.display = 'block';
-    document.getElementById('artDesigns').style.display = 'none'; // Hide designs until a category is selected
-};
-
-// Function to display designs based on selected category (with image previews)
-window.showDesigns = function(category) {
-    const designOptions = document.getElementById('designOptions');
-    designOptions.innerHTML = ''; // Clear previous designs
-    document.getElementById('artDesigns').style.display = 'block';
-
-    // Loop through designs and create clickable images for each design
-    designs[category].forEach((design, index) => {
-        const designImg = document.createElement('img');
-        designImg.src = design;
-        designImg.style.width = '50px'; // Set a small width for preview
-        designImg.style.cursor = 'pointer'; // Make it clear that it's clickable
-        designImg.style.margin = '10px'; // Add some margin between previews
-
-        designImg.onclick = function() {
-            applyDesignToModel(design); // Apply design on click
-        };
-
-        designOptions.appendChild(designImg);
-    });
-};
-
-
-// Function to apply selected design to the t-shirt
+// Function to apply art design to the t-shirt (front or back)
 window.applyDesignToModel = function(designSrc) {
     const img = new Image();
     img.src = designSrc;
@@ -300,21 +191,22 @@ window.applyDesignToModel = function(designSrc) {
     img.onload = function() {
         const texture = new THREE.Texture(img);
         texture.needsUpdate = true;
-
-        // Set texture wrap and repeat
         texture.wrapS = THREE.ClampToEdgeWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1.68, 1.5); // Adjust to fit the model
-        texture.offset.set(0.5, 0); // Adjust to position the image on the front
+        texture.repeat.set(1.68, 1.5);
 
-        model.traverse((child) => {
-            if (child.isMesh) {
-                child.material.map = texture;
-                child.material.needsUpdate = true;
-            }
-        });
+        const side = document.getElementById('artSideSelection').value;
+        if (side === 'front') {
+            frontTexture = texture;
+            applyFrontTexture();
+        } else if (side === 'back') {
+            backTexture = texture;
+            applyBackTexture();
+        }
     };
 };
+
+
 
 
 
