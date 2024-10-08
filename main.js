@@ -76,12 +76,13 @@ function initializeCanvas() {
    // }
 }
 
-let selectedTextColor = '#000000'; // Default color for the text
+// Modify the changeColor function to set the selectedTextColor globally
+window.selectedTextColor = '#000000'; // Set default color initially
 
 // Make the function globally accessible by attaching it to the window object
 window.changeTextColor = function(color) {
-    selectedTextColor = color;
-    console.log("Selected text color: ", selectedTextColor); // Debugging log
+    window.selectedTextColor = color;
+    console.log("Selected text color: ", window.selectedTextColor); // Debugging log
 }
 
 // Function to add text to the t-shirt model (front or back)
@@ -89,6 +90,7 @@ window.addTextToTshirt = function(yOffset) {
     const userText = document.getElementById('userText').value;
     const side = document.getElementById('textSideSelection').value;
     const selectedFont = document.getElementById('fontSelection').value;
+    const selectedTextColor = window.selectedTextColor; // Access the selected text color
     
     if (userText.trim() === "") {
         alert("Please enter text.");
@@ -120,10 +122,18 @@ window.addTextToTshirt = function(yOffset) {
         textTexture.offset.set(0, 0.1); // Move texture to the front
         frontTexture = textTexture;
         applyFrontTexture();
+        tshirtData.front.text = userText;
+        tshirtData.front.font = selectedFont;
+        tshirtData.front.color = selectedTextColor;
+        tshirtData.front.position = yOffset; // Store the front text position
     } else if (side === 'back') {
         textTexture.offset.set(0, 0.1); // Move texture to the back (adjust as needed)
         backTexture = textTexture;
         applyBackTexture();
+        tshirtData.back.text = userText;
+        tshirtData.back.font = selectedFont;
+        tshirtData.back.color = selectedTextColor;
+        tshirtData.back.position = yOffset; // Store the back text position
     }
 };
 
@@ -173,11 +183,18 @@ window.applyImageToModel = function() {
             if (side === 'front') {
                 frontTexture = texture;
                 applyFrontTexture();
+                // Save image source to front side in tshirtData
+                tshirtData.front.imageSrc = event.target.result;
             } else if (side === 'back') {
                 texture.offset.set(-0.3, -0.4); // Adjust for back (this is just an example, adjust values based on UV map) 
                 backTexture = texture;
                 applyBackTexture();
+                // Save image source to back side in tshirtData
+                tshirtData.back.imageSrc = event.target.result;
             }
+             // Preview the uploaded image
+            //  document.getElementById('previewImage').src = event.target.result;          KEEP THIS COMMENTED 
+            //  document.getElementById('previewImage').style.display = 'block'; // Show the image preview      KEEP THIS COMMENTED
         };
     };
 
@@ -244,6 +261,73 @@ window.applyDesignToModel = function(designSrc) {
 };
 
 
+//backend 
+// Add a click event listener to the "Add to Cart" button
+document.getElementById('addToCartButton').addEventListener('click', function() {
+    addToCart();
+});
+
+
+// Global object to store t-shirt customization data
+const tshirtData = {
+    front: {
+        text: '',
+        font: '',
+        color: '',
+        position: 0, // Default position for front text
+        imageSrc: '' // Store the front image source
+    },
+    back: {
+        text: '',
+        font: '',
+        color: '',
+        position: 0, // Default position for back text
+        imageSrc: '' // Store the back image source
+    }
+};
+
+
+function addToCart() {
+    // Prepare a data object with customization info
+    // Ensure both sides are added to cart with their individual settings including positions
+    const tshirtCartData = {
+        front: {
+            text: tshirtData.front.text,
+            font: tshirtData.front.font,
+            color: tshirtData.front.color,
+            position: tshirtData.front.position, // Front text position
+            imageSrc: tshirtData.front.imageSrc // Store front image source
+        },
+        back: {
+            text: tshirtData.back.text,
+            font: tshirtData.back.font,
+            color: tshirtData.back.color,
+            position: tshirtData.back.position, // Back text position
+            imageSrc: tshirtData.back.imageSrc // Store back image source
+        },
+        model: 'tshirt_3d_model_data', // Placeholder for actual model data
+    };
+
+    // Placeholder: Log data to console (this will later be sent to the backend)
+    console.log("T-shirt added to cart with the following details:", tshirtCartData);
+
+    // You can now send this data to the backend using fetch() or Axios (coming in Step 2)
+    fetch('http://localhost:5000/api/tshirts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tshirtData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        // Redirect to cart page or show success message
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
 
 
 
