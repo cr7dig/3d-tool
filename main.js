@@ -10,7 +10,7 @@ document.body.appendChild(renderer.domElement);
 
 // Create camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 30, 30);
+camera.position.set(0, 8, 25);
 
 // Add lights
 const ambientLight = new THREE.AmbientLight(0xffffff, 2);
@@ -24,7 +24,7 @@ scene.add(directionalLight);
 const loader = new GLTFLoader();
 let model;
 
-loader.load('./models/tshirt2.glb', function (gltf) {
+loader.load('./models/Tshirt_02_N.glb', function (gltf) {
     model = gltf.scene;
 
     model.traverse((child) => {
@@ -66,14 +66,14 @@ window.resetColor = function() {
 let canvas, context;
 
 function initializeCanvas() {
-    if (!canvas) {
+   // if (!canvas) {
     canvas = document.createElement('canvas');
     canvas.width = 1024;
     canvas.height = 1024;
     context = canvas.getContext('2d');
     context.fillStyle = '#ffffff';
     context.fillRect(0, 0, canvas.width, canvas.height);
-    }
+   // }
 }
 
 let selectedTextColor = '#000000'; // Default color for the text
@@ -114,13 +114,14 @@ window.addTextToTshirt = function(yOffset) {
     const textTexture = new THREE.CanvasTexture(canvas);
     textTexture.wrapS = THREE.ClampToEdgeWrapping;
     textTexture.wrapT = THREE.RepeatWrapping;
+    textTexture.repeat.set(1, 1); // Original repeat settings
 
     if (side === 'front') {
-        textTexture.offset.set(0.5, 0); // Move texture to the front
+        textTexture.offset.set(0, 0.1); // Move texture to the front
         frontTexture = textTexture;
         applyFrontTexture();
     } else if (side === 'back') {
-        textTexture.offset.set(-0.5, 0); // Move texture to the back (adjust as needed)
+        textTexture.offset.set(0, 0.1); // Move texture to the back (adjust as needed)
         backTexture = textTexture;
         applyBackTexture();
     }
@@ -129,7 +130,7 @@ window.addTextToTshirt = function(yOffset) {
 // Function to apply front texture (preserve back texture)
 function applyFrontTexture() {
     model.traverse((child) => {
-        if (child.isMesh && child.material.name === 'FABRIC_1_FRONT_4193') {
+        if (child.isMesh && child.material.name === 'Front') {
             child.material.map = frontTexture;
             child.material.needsUpdate = true;
         }
@@ -139,7 +140,7 @@ function applyFrontTexture() {
 // Function to apply back texture (preserve front texture)
 function applyBackTexture() {
     model.traverse((child) => {
-        if (child.isMesh && child.material.name === 'FABRIC back') {
+        if (child.isMesh && child.material.name === 'Back') {
             child.material.map = backTexture;
             child.material.needsUpdate = true;
         }
@@ -165,15 +166,15 @@ window.applyImageToModel = function() {
             const texture = new THREE.Texture(img);
             texture.needsUpdate = true;
             texture.wrapS = THREE.ClampToEdgeWrapping;
-            texture.wrapT = THREE.RepeatWrapping;
-            texture.repeat.set(1.68, 1.5);
-            texture.offset.set(0.5, 0); // Adjust to move the texture to the front
+            texture.wrapT = THREE.ClampToEdgeWrapping;
+            texture.repeat.set(1.6, 1.65);
+            texture.offset.set(-0.32, -0.4); // Adjust to move the texture to the front
 
             if (side === 'front') {
                 frontTexture = texture;
                 applyFrontTexture();
             } else if (side === 'back') {
-                texture.offset.set(-1.2, 0); // Adjust for back (this is just an example, adjust values based on UV map)
+                texture.offset.set(-0.3, -0.4); // Adjust for back (this is just an example, adjust values based on UV map) 
                 backTexture = texture;
                 applyBackTexture();
             }
@@ -181,6 +182,41 @@ window.applyImageToModel = function() {
     };
 
     reader.readAsDataURL(file);
+};
+
+// Array of designs for each category (replace with actual paths or images)
+const designs = {
+    animals: ['assets/art/mountain1.jpg', 'designs/animal2.png'], //only mountain1.jpg is existing baki sab doesnt exist
+    abstract: ['designs/abstract1.png', 'designs/abstract2.png'], //need to add more art designs
+    shapes: ['designs/shape1.png', 'designs/shape2.png']
+};
+
+// Function to display categories
+window.showCategories = function() {
+    document.getElementById('artCategories').style.display = 'block';
+    document.getElementById('artDesigns').style.display = 'none'; // Hide designs until a category is selected
+};
+
+// Function to display designs based on selected category (with image previews)
+window.showDesigns = function(category) {
+    const designOptions = document.getElementById('designOptions');
+    designOptions.innerHTML = ''; // Clear previous designs
+    document.getElementById('artDesigns').style.display = 'block';
+
+    // Loop through designs and create clickable images for each design
+    designs[category].forEach((design,index) => {                           //index ka significance malum nahi but letting it be there, not affecting anything ig
+        const designImg = document.createElement('img');
+        designImg.src = design;
+        designImg.style.width = '50px'; // Set a small width for preview
+        designImg.style.cursor = 'pointer'; // Make it clear that it's clickable
+        designImg.style.margin = '10px'; // Add some margin between previews
+
+        designImg.onclick = function() {
+            applyDesignToModel(design); // Apply design on click
+        };
+
+        designOptions.appendChild(designImg);
+    });
 };
 
 // Function to apply art design to the t-shirt (front or back)
@@ -192,8 +228,9 @@ window.applyDesignToModel = function(designSrc) {
         const texture = new THREE.Texture(img);
         texture.needsUpdate = true;
         texture.wrapS = THREE.ClampToEdgeWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1.68, 1.5);
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+        texture.repeat.set(1.6, 1.65);
+        texture.offset.set(-0.32, -0.4);
 
         const side = document.getElementById('artSideSelection').value;
         if (side === 'front') {

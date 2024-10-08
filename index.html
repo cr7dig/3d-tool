@@ -52,7 +52,7 @@
         <button onclick="changeColor('#964B00')" style="background-color: #964B00; width: 30px; height: 30px; border: none;"></button>
         <button onclick="changeColor('#ADD8E6')" style="background-color: #ADD8E6; width: 30px; height: 30px; border: none;"></button>
         <button onclick="changeColor('#ffff00')" style="background-color: #ffff00; width: 30px; height: 30px; border: none;"></button>
-        <button onclick="changeColor('#000000')" style="background-color: #000000; width: 30px; height: 30px; border: none;"></button>
+        <button onclick="changeColor('#5f5f5f')" style="background-color: #5f5f5f; width: 30px; height: 30px; border: none;"></button>
         <button onclick="resetColor()" style="margin-left: 10px;">Reset to Default(WHITE)</button>
     </div>
    <!-- <div style="position: absolute; top: 50px; left: 10px; z-index: 1;">
@@ -91,7 +91,7 @@
 
     <label for="textColorSelection">Choose Text Color:</label>
     <div id="textColorSelection" style="position: absolute; top: 200px;">
-        <button onclick="changeTextColor('#FFFFFF')" style="background-color: #FFFFFF; width: 30px; height: 30px; border: none;"></button> <!-- White -->
+        <!-- <button onclick="changeTextColor('#FFFFFF')" style="background-color: #FFFFFF; width: 30px; height: 30px; border: none;"></button> White hai but work nahi karta  -->
         <button onclick="changeTextColor('#000000')" style="background-color: #000000; width: 30px; height: 30px; border: none;"></button> <!-- Black -->
         <button onclick="changeTextColor('#FF0000')" style="background-color: #FF0000; width: 30px; height: 30px; border: none;"></button> <!-- Red -->
         <button onclick="changeTextColor('#00FF00')" style="background-color: #00FF00; width: 30px; height: 30px; border: none;"></button> <!-- Green -->
@@ -130,6 +130,12 @@
             <button onclick="showDesigns('abstract')">Abstract</button>
             <button onclick="showDesigns('shapes')">Shapes</button>
         </div>
+
+        <label for="artSideSelection">Choose Side:</label>
+        <select id="artSideSelection">
+            <option value="front">Front</option>
+            <option value="back">Back</option>
+        </select>
     
         <!-- Container for displaying designs -->
         <div id="artDesigns" style="display:none;">
