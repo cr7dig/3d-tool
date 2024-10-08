@@ -1,165 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My first three.js app</title>
+    <title>T-Shirt Customizer</title>
     <style>
-         @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&family=Great+Vibes&family=Satisfy&family=Allura&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+        
         body {
             margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            height: 100vh;
         }
-       
         
-        /* Styling for Art Modal */ /* this code is not applied to anything yet, yeh purana art section keliye hai, but we can use this if u want */
-        #artModal, #artOptions {
-             width: 400px;
-            text-align: center;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background-color: #ffffff;
             padding: 20px;
-            box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
-            z-index: 2;
-            border-radius: 10px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            position: absolute;
         }
-        #artImages img {
+        
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            background-color: #e0e0e0;
+            width: 0;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            transition: transform 0.2s ease;
-            width: 100px;
-            margin: 10px;
+            transition: background-color 0.3s;
         }
-        #artImages img:hover {
-            transform: scale(1.1);
-        }  
-        /* this code is not applied to anything yet, yeh purana art section keliye hai, but we can use this if u want */
-    
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .color-button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        #previewImage {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+        
+        .preview-container {
+            margin-top: 20px;
+        }
+        
+        .preview-container img {
+            max-width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
     </style>
-    
-        
-    
-    <script
-        type="importmap"> { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/" } } </script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/"
+            }
+        }
+    </script>
 </head>
-
 <body>
-    
-       <!-- <input type="color" id="colorPicker" value="#ff0000" style="position: absolute; top: 10px; left: 10px; z-index: 1;"> -->
-     <div style="position: absolute; top: 10px; left: 10px;">
-        <button onclick="changeColor('#ff0000')" style="background-color: #ff0000; width: 30px; height: 30px; border: none;"></button>
-        <button onclick="changeColor('#964B00')" style="background-color: #964B00; width: 30px; height: 30px; border: none;"></button>
-        <button onclick="changeColor('#ADD8E6')" style="background-color: #ADD8E6; width: 30px; height: 30px; border: none;"></button>
-        <button onclick="changeColor('#ffff00')" style="background-color: #ffff00; width: 30px; height: 30px; border: none;"></button>
-        <button onclick="changeColor('#5f5f5f')" style="background-color: #5f5f5f; width: 30px; height: 30px; border: none;"></button>
-        <button onclick="resetColor()" style="margin-left: 10px;">Reset to Default(WHITE)</button>
-    </div>
-   <!-- <div style="position: absolute; top: 50px; left: 10px; z-index: 1;">
-        
-        <input type="text" id="userText" placeholder="Enter text here">
-        <button onclick="addTextToTshirt(1.8)">Add Text at Y = 2</button>
-        <button onclick="addTextToTshirt(2.4)">Add Text at Y = 2.5</button>
-        <button onclick="addTextToTshirt(3)">Add Text at Y = 3</button>
-    </div> -->
-    <div style="position: absolute; top: 50px; left: 10px; ">
-        <input type="text" id="userText" placeholder="Enter text here">
-        
-        
-        <label for="textSideSelection">Choose Side:</label>
-        <select id="textSideSelection">
-            <option value="front">Front</option>
-            <option value="back">Back</option>
-        </select>
-
-        <label for="fontSelection">Choose Font:</label>
-    <select id="fontSelection">
-        <option value="Arial">Arial</option>
-        <option value="Holtwood One SC">Holtwood One SC</option> 
-        <option value="Montserrat SemiBold">Montserrat SemiBold</option>
-        <option value="Montserrat Thin">Montserrat Thin</option>
-        <option value="Times New Roman">Times New Roman</option>
-        <option value="Courier New">Courier New</option>
-        <option value="Georgia">Georgia</option>
-        <option value="Verdana">Verdana</option>
-        <!-- <option value="Pacifico">Pacifico</option>
-        <option value="Dancing Script">Dancing Script</option>
-        <option value="Lobster">Lobster</option>
-        <option value="Cinzel Decorative">Cinzel Decorative</option>
-        <option value="Great Vibes">Great Vibes</option> -->
-    </select>
-
-    <label for="textColorSelections">Choose Text Color:</label>
-    <div id="textColorSelection" style="position: absolute; top: 200px;">
-        <!-- <button onclick="changeTextColor('#FFFFFF')" style="background-color: #FFFFFF; width: 30px; height: 30px; border: none;"></button> White hai but work nahi karta  -->
-        <button onclick="changeTextColor('#000000')" style="background-color: #000000; width: 30px; height: 30px; border: none;"></button> <!-- Black -->
-        <button onclick="changeTextColor('#FF0000')" style="background-color: #FF0000; width: 30px; height: 30px; border: none;"></button> <!-- Red -->
-        <button onclick="changeTextColor('#00FF00')" style="background-color: #00FF00; width: 30px; height: 30px; border: none;"></button> <!-- Green -->
-        <button onclick="changeTextColor('#0000FF')" style="background-color: #0000FF; width: 30px; height: 30px; border: none;"></button> <!-- Blue -->
-        <button onclick="changeTextColor('#FFFF00')" style="background-color: #FFFF00; width: 30px; height: 30px; border: none;"></button> <!-- Yellow -->
-    </div>
-        
-        <button onclick="addTextToTshirt(1.8)">Add Text at Y = 1.8</button>
-        <button onclick="addTextToTshirt(2.4)">Add Text at Y = 2.4</button>
-        <button onclick="addTextToTshirt(3.8)">Add Text at Y = 3</button>
-    </div>
-    
-    <!-- <div style="position: absolute; top: 80px; left: 10px; z-index: 1;"><input type="file" id="imagePicker" accept="image/*">
-    <button onclick="applyImageToModel()">Apply Image</button></div> -->
-    <div style="position: absolute; top: 80px; left: 10px;">
-        <input type="file" id="imagePicker" accept="image/*">
-        <label for="sideSelection">Choose Side:</label>
-        <select id="sideSelection">
-            <option value="front">Front</option>
-            <option value="back">Back</option>
-        </select>
-        <button onclick="applyImageToModel()">Apply Image</button>
-    </div>
-    
-    <div style="position: absolute; top: 120px; left: 10px;">
-        <button id="refreshButton">Refresh Page</button>
-    </div>
-
-    <div style="position: absolute; top: 160px; left: 10px;">
-        <button onclick="showCategories()">Art</button>
-        
-        <!-- Container for displaying categories -->
-        <div id="artCategories" style="display:none;">
-            <h3>Select Category:</h3>
-            <button onclick="showDesigns('animals')">Animals</button>
-            <button onclick="showDesigns('abstract')">Abstract</button>
-            <button onclick="showDesigns('shapes')">Shapes</button>
+    <div class="container">
+        <div class="sidebar">
+            <h2>T-Shirt Customizer</h2>
+            
+            <div class="control-group">
+                <h3>Color</h3>
+                <div class="color-picker">
+                    <button onclick="changeColor('#ff0000')" class="color-button" style="background-color: #ff0000;"></button>
+                    <button onclick="changeColor('#964B00')" class="color-button" style="background-color: #964B00;"></button>
+                    <button onclick="changeColor('#ADD8E6')" class="color-button" style="background-color: #ADD8E6;"></button>
+                    <button onclick="changeColor('#ffff00')" class="color-button" style="background-color: #ffff00;"></button>
+                    <button onclick="changeColor('#5f5f5f')" class="color-button" style="background-color: #5f5f5f;"></button>
+                </div>
+                <button onclick="resetColor()">Reset to Default (WHITE)</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>Add Text</h3>
+                <input type="text" id="userText" placeholder="Enter text here">
+                <label for="textSideSelection">Choose Side:</label>
+                <select id="textSideSelection">
+                    <option value="front">Front</option>
+                    <option value="back">Back</option>
+                </select>
+                <label for="fontSelection">Choose Font:</label>
+                <select id="fontSelection">
+                    <option value="Arial">Arial</option>
+                    <option value="Holtwood One SC">Holtwood One SC</option>
+                    <option value="Montserrat SemiBold">Montserrat SemiBold</option>
+                    <option value="Montserrat Thin">Montserrat Thin</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Verdana">Verdana</option>
+                </select>
+                <h4>Text Color:</h4>
+                <div class="color-picker">
+                    <button onclick="changeTextColor('#000000')" class="color-button" style="background-color: #000000;"></button>
+                    <button onclick="changeTextColor('#FF0000')" class="color-button" style="background-color: #FF0000;"></button>
+                    <button onclick="changeTextColor('#00FF00')" class="color-button" style="background-color: #00FF00;"></button>
+                    <button onclick="changeTextColor('#0000FF')" class="color-button" style="background-color: #0000FF;"></button>
+                    <button onclick="changeTextColor('#FFFF00')" class="color-button" style="background-color: #FFFF00;"></button>
+                </div>
+                <button onclick="addTextToTshirt(1.8)">Stomach</button>
+                <button onclick="addTextToTshirt(2.4)">Sternum</button>
+                <button onclick="addTextToTshirt(3.8)">Chest</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>Add Image</h3>
+                <input type="file" id="imagePicker" accept="image/*">
+                <label for="sideSelection">Choose Side:</label>
+                <select id="sideSelection">
+                    <option value="front">Front</option>
+                    <option value="back">Back</option>
+                </select>
+                <button onclick="applyImageToModel()">Apply Image</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>Art</h3>
+                <button onclick="showCategories()">Show Art Categories</button>
+                <div id="artCategories" style="display:none;">
+                    <h4>Select Category:</h4>
+                    <button onclick="showDesigns('animals')">Animals</button>
+                    <button onclick="showDesigns('abstract')">Abstract</button>
+                    <button onclick="showDesigns('shapes')">Shapes</button>
+                </div>
+                <label for="artSideSelection">Choose Side:</label>
+                <select id="artSideSelection">
+                    <option value="front">Front</option>
+                    <option value="back">Back</option>
+                </select>
+                <div id="artDesigns" style="display:none;">
+                    <h4>Select Design:</h4>
+                    <div id="designOptions"></div>
+                </div>
+            </div>
+            
+            <button id="refreshButton">Refresh Page</button>
+            <button id="addToCartButton">Add to Cart</button>
+            <button onclick="window.location.href='cart.html'">Go to Cart</button>
+            
+            <div class="preview-container">
+                <h3>Preview Front View</h3>
+                <img id="frontScreenshotPreview" src="" alt="Front Screenshot">
+                <h3>Preview Back View</h3>
+                <img id="backScreenshotPreview" src="" alt="Back Screenshot">
+            </div>
         </div>
-
-        <label for="artSideSelection">Choose Side:</label>
-        <select id="artSideSelection">
-            <option value="front">Front</option>
-            <option value="back">Back</option>
-        </select>
-    
-        <!-- Container for displaying designs -->
-        <div id="artDesigns" style="display:none;">
-            <h3>Select Design:</h3>
-            <div id="designOptions"></div>
+        
+        <div class="main-content">
+            <!-- 3D model will be loaded here -->
+            <canvas id="tshirtCanvas"></canvas>
+            <script type="module" src="/main.js">
+                import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
+                import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/loaders/GLTFLoader.js';
+            </script>
         </div>
     </div>
     
     
-    <button id="addToCartButton" style="position: absolute;top: 180px; right: 10px;">Add to Cart</button>
-    <button onclick="window.location.href='cart.html'" style="position: absolute;top: 220px;right: 10px;">Go to Cart</button>
-
-
-    
-    <!--DONT UNCOMMENT THIS LINE <img id="previewImage" src="" alt="Image Preview" style="max-width: 200px; display: none;" />     DONT UNCOMMENT THIS LINE THIS WAS JUST A PREVIEW LINE-->
-
-
-    
-    <script type="module" src="/main.js"> import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
-        import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/loaders/GLTFLoader.js';
-       // import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/controls/OrbitControls.js';
-       </script>
-
 </body>
-
-</html>

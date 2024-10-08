@@ -193,8 +193,8 @@ window.applyImageToModel = function() {
                 tshirtData.back.imageSrc = event.target.result;
             }
              // Preview the uploaded image
-            //  document.getElementById('previewImage').src = event.target.result;          KEEP THIS COMMENTED 
-            //  document.getElementById('previewImage').style.display = 'block'; // Show the image preview      KEEP THIS COMMENTED
+              document.getElementById('previewImage').src = event.target.result;        //  KEEP THIS COMMENTED 
+              document.getElementById('previewImage').style.display = 'block'; // Show the image preview      KEEP THIS COMMENTED
         };
     };
 
@@ -288,6 +288,13 @@ const tshirtData = {
 
 
 function addToCart() {
+    // Capture screenshots for front and back
+    const frontScreenshot = captureScreenshot('front');
+    const backScreenshot = captureScreenshot('back');
+
+    // Display screenshots in the preview elements on the page
+    document.getElementById('frontScreenshotPreview').src = frontScreenshot;
+    document.getElementById('backScreenshotPreview').src = backScreenshot;
     // Prepare a data object with customization info
     // Ensure both sides are added to cart with their individual settings including positions
     const tshirtCartData = {
@@ -296,14 +303,16 @@ function addToCart() {
             font: tshirtData.front.font,
             color: tshirtData.front.color,
             position: tshirtData.front.position, // Front text position
-            imageSrc: tshirtData.front.imageSrc // Store front image source
+            imageSrc: tshirtData.front.imageSrc, // Store front image source
+            screenshot: frontScreenshot // Front view screenshot
         },
         back: {
             text: tshirtData.back.text,
             font: tshirtData.back.font,
             color: tshirtData.back.color,
             position: tshirtData.back.position, // Back text position
-            imageSrc: tshirtData.back.imageSrc // Store back image source
+            imageSrc: tshirtData.back.imageSrc, // Store back image source
+            screenshot: backScreenshot // Back view screenshot
         },
         model: 'tshirt_3d_model_data', // Placeholder for actual model data
     };
@@ -328,6 +337,37 @@ function addToCart() {
         console.error('Error:', error);
     });
 }
+
+
+
+// Function to capture screenshots
+function captureScreenshot(view = 'front') {
+    const originalCamPos = camera.position.clone(); // Store original position
+    const originalCamRot = camera.rotation.clone(); // Store original rotation
+
+    // Adjust the camera based on the view (front or back)
+    if (view === 'front') {
+        camera.position.set(0, 8, 25); // Adjust this to match the front view
+    } else if (view === 'back') {
+        camera.position.set(0, 8, -25); // Adjust this to match the back view
+        camera.rotation.y = Math.PI; // Rotate 180 degrees for the back view
+    }
+
+    // Render the scene to capture the screenshot
+    renderer.render(scene, camera);
+    const canvas = renderer.domElement;
+    const screenshotDataURL = canvas.toDataURL('image/png'); // Capture as data URL
+
+    // Restore the camera settings
+    camera.position.copy(originalCamPos);
+    camera.rotation.copy(originalCamRot);
+
+    return screenshotDataURL; // Return the screenshot data URL
+    
+}
+
+
+
 
 
 
